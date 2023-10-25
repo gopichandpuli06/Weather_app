@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 
-function App() {
+const baseURL = "https://frontend-take-home-service.fetch.com";
+
+export default function App() {
+  const [breed, setPost] = useState(null);
+
+  useEffect(() => {
+    // Assuming you need to login to access /dogs/breeds
+    axios
+      .post(`${baseURL}/auth/login`, {
+        name: "data",
+        email: "data@gmail.com",
+      }, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        // You don't need to manually set cookies
+        setPost(response.data);
+      })
+      .catch((error) => {
+        console.error("Login Error:", error);
+      });
+  }, []);
+
+  function createPost() {
+    axios.defaults.withCredentials=true;
+    axios
+      .get(`${baseURL}/dogs/breeds`, {
+        withCredentials: true, // This will include cookies
+      })
+      .then((response) => {
+        (setPost(response.data));
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("GET Request Error:", error);
+      });
+  }
+
+  if (!breed) return "No post!";
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>{breed}</p>
+      <button onClick={createPost}>Create Post</button>
     </div>
   );
 }
-
-export default App;
